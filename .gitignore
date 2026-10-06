@@ -7,6 +7,7 @@ config/ca-key.pem
 config/*-cert.pem
 config/ca-cert.pem  
 config/admin-key.pem
+config/public.pem
 config/private.pem
 config/*.csr
 config/*.srl
