@@ -1,7 +1,5 @@
 # MPC-RS
 
-**A production-grade, multi-party computation (MPC) wallet infrastructure for institutional digital asset custody.**
-
 MPC-RS is a pure Rust implementation of a threshold-signature wallet system that enables secure, distributed key management across multiple blockchain networks. By splitting private key material into encrypted shares distributed across independent nodes, MPC-RS eliminates single points of failure and removes the need for any single party to hold a complete private key.
 
 ---
