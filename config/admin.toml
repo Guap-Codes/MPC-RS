@@ -1,0 +1,9 @@
+# config/admin.toml
+
+[coordinator]
+url = "https://127.0.0.1:50052"  # <-- Changed from "coordinator" to 127.0.0.1
+
+[tls]
+ca_cert = "config/ca-cert.pem"
+client_cert = "config/admin-cert.pem"
+client_key = "config/admin-key.pem"

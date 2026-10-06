@@ -1,0 +1,15 @@
+[package]
+name = "ledger-hw"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+hw-common.workspace = true
+async-trait.workspace = true
+ledger-transport-hid = "0.11"
+ledger-apdu = "0.11"
+hex.workspace = true
+tokio.workspace = true
+
+[lints]
+workspace = true

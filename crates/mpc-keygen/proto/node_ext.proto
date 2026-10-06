@@ -1,0 +1,73 @@
+// crates/mpc-keygen/proto/node_ext.proto
+// ============================================================================
+// MPC Node Extended Admin Service
+// ============================================================================
+// This file defines the communication protocol for the `MpcAdminNode` service,
+// which is exposed by MPC nodes specifically for administrative tasks like 
+// triggering Distributed Key Generation (DKG) ceremonies and retrieving the 
+// resulting public keys.
+//
+// Note: This is a simplified subset of the full `mpc-protocol` to avoid 
+// cross-crate dependencies in this standalone keygen tool.
+
+syntax = "proto3";
+
+package mpc_keygen;
+
+/// Request to trigger a DKG or signing session on a specific node.
+message SessionRequest {
+  // A unique UUID identifying this specific protocol execution.
+  string session_id = 1;
+  
+  // The type of session to initiate (0 = DKG, 1 = SIGNING).
+  enum Type {
+    DKG = 0;
+    SIGNING = 1;
+  }
+  Type session_type = 2;
+  
+  // The total number of parties (n) participating in the session.
+  uint32 total_parties = 3;
+  
+  // The minimum number of parties (t) required to reach a threshold.
+  uint32 threshold = 4;
+  
+  // The elliptic curve to use (e.g., "secp256k1", "ed25519").
+  string curve = 5;
+  
+  // The 32-byte message digest to sign (only used for SIGNING sessions).
+  bytes message_hash = 6;
+  
+  // The 1-based indices of the parties participating in this specific run.
+  repeated uint32 signer_indices = 7;
+  
+  // Optional BIP32 derivation path for HD key derivation during signing.
+  string derivation_path = 8;
+}
+
+/// Response acknowledging the node has accepted the session request.
+message SessionResponse {
+  // True if the node successfully initialized the session locally.
+  bool accepted = 1;
+}
+
+/// Request to retrieve the public key resulting from a completed DKG session.
+message GetPublicKeyRequest {
+  // The unique label identifying the key share (e.g., "dkg-<session_id>").
+  string label = 1;
+}
+
+/// Response containing the generated public key.
+message PublicKeyResponse {
+  // The compressed SEC1 bytes for secp256k1, or the appropriate format for other curves.
+  bytes public_key = 1;
+}
+
+/// The extended node service that the keygen admin tool communicates with.
+service MpcAdminNode {
+  /// Instructs the node to begin a DKG or signing session.
+  rpc StartSession(SessionRequest) returns (SessionResponse);
+  
+  /// Retrieves the public key for a completed DKG session.
+  rpc GetPublicKey(GetPublicKeyRequest) returns (PublicKeyResponse);
+}

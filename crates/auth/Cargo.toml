@@ -1,0 +1,24 @@
+[package]
+name = "auth"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+jsonwebtoken.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+thiserror.workspace = true
+reqwest = { version = "0.12", features = ["json"], optional = true }  # for OAuth JWKS
+tokio = { workspace = true, optional = true }
+tonic = { workspace = true, optional = true }
+
+[features]
+default = ["tonic-middleware"]
+tonic-middleware = ["tonic"]
+oauth = ["reqwest", "tokio"]
+
+[lints]
+workspace = true

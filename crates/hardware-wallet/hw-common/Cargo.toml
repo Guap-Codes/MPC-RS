@@ -1,0 +1,11 @@
+[package]
+name = "hw-common"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+async-trait.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true

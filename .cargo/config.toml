@@ -1,0 +1,5 @@
+# mpc-rs/.cargo/config.toml
+
+[env]
+# Tell gmp-mpfr-sys to link against the system's libgmp instead of building from source
+GMP_MPFR_SYS_USE_SYSTEM_LIBS = "1"

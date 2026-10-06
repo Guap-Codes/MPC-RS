@@ -1,0 +1,12 @@
+[package]
+name = "adapter-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+async-trait.workspace = true
+bitcoin.workspace = true
+
+[lints]
+workspace = true

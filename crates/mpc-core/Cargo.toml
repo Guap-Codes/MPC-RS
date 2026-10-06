@@ -1,0 +1,42 @@
+[package]
+name = "mpc-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+mpc-common.workspace = true
+cggmp21.workspace = true
+tokio.workspace = true
+async-stream.workspace = true
+bincode.workspace = true
+k256.workspace = true
+ed25519-dalek.workspace = true
+curve25519-dalek.workspace = true
+group.workspace = true
+tonic.workspace = true
+chrono.workspace = true
+rand.workspace = true
+rand_core.workspace = true
+uuid.workspace = true
+zeroize.workspace = true
+sha2.workspace = true
+sha3.workspace = true
+digest.workspace = true
+subtle.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+frost-ed25519.workspace = true
+frost-core.workspace = true
+mpc-protocol.workspace = true
+
+
+[features]
+# Optional feature for explicit opt-in, though `cargo kani` will auto-enable via --cfg=kani
+formal-verify = []
+
+[lints]
+workspace = true
+

@@ -1,0 +1,40 @@
+party_id = 2
+listen_addr = "0.0.0.0:50002"
+coordinator_addr = "127.0.0.1:50052"
+
+[tls]
+certificate_path = "config/node2-cert.pem"
+private_key_path = "config/node2-key.pem"
+ca_certificate_path = "config/ca-cert.pem"
+
+[hsm]
+provider = "SoftHsm"
+share_label = "master"
+
+[hsm.soft_hsm]
+data_dir = "./data/node2"
+master_key_file = "./data/node2_hsm_master.key"
+
+[session]
+message_timeout_secs = 30
+max_retries = 3
+retry_interval_ms = 1000
+
+[logging]
+level = "info"
+format = "Plain"
+otlp_endpoint = "http://localhost:4317"
+
+[[peers]]
+party_id = 1
+address = "https://127.0.0.1:50001"
+domain = "node1"
+cert_path = "config/node2-cert.pem"
+key_path = "config/node2-key.pem"
+
+[[peers]]
+party_id = 3
+address = "https://127.0.0.1:50003"
+domain = "node3"
+cert_path = "config/node2-cert.pem"
+key_path = "config/node2-key.pem"

@@ -1,0 +1,10 @@
+Control ID,Control Name,MPC-RS Implementation,Evidence / Artifact
+5.15,Access Control,"mTLS for node-to-node and node-to-coordinator communication. JWT for API and CLI access.",crates/auth/, crates/mpc-protocol/src/transport.rs
+5.33,Protection of Records,"Append-only, HMAC-signed audit trail for all DKG, signing, and rotation events.",crates/mpc-common/src/audit.rs
+8.1,User Endpoint Devices,"N/A (Backend infrastructure only. User endpoints interact via stateless REST API).",docs/architecture.md
+8.9,Configuration Management,"Infrastructure as Code via Docker Compose. Strict TOML configuration validation via serde.",docker/docker-compose.yml, crates/mpc-common/src/config.rs
+8.12,Data Leakage Prevention,"Rust `Zeroize` trait enforced on all structs containing key material (`KeyShare`, `Nonce`). Private keys never touch the disk unencrypted.",crates/mpc-common/src/types.rs
+8.16,Monitoring Activities,"OpenTelemetry integration for distributed tracing and metrics export to OTLP collectors.",crates/mpc-node/src/logging.rs
+8.23,Web Filtering,"N/A (Nodes do not initiate outbound web traffic except to configured, hardcoded RPC endpoints).",crates/mpc-api/src/blockchain_builder.rs
+8.24,Use of Cryptography,"Implementation of CGGMP21 (Threshold ECDSA) and FROST (Threshold EdDSA). No custom cryptography; relies on audited `cggmp21` and `frost-ed25519` crates.",crates/mpc-core/
+8.25,Secure Development Lifecycle,"Workspace-wide `cargo-deny` rules, `clippy` pedantic lints, and mandatory `cargo audit` in CI pipeline.",deny.toml, Cargo.toml

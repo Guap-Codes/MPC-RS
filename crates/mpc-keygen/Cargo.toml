@@ -1,0 +1,33 @@
+[package]
+name = "mpc-keygen"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "mpc-keygen"
+path = "src/main.rs"
+
+[dependencies]
+tokio.workspace = true
+tonic.workspace = true
+prost.workspace = true
+tonic-prost.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+thiserror.workspace = true
+clap = { version = "4", features = ["derive"] }
+rustls.workspace = true
+rustls-pemfile.workspace = true
+hex.workspace = true
+tokio-rustls.workspace = true
+
+mpc-common.workspace = true
+mpc-protocol.workspace = true
+
+[build-dependencies]
+tonic-prost-build.workspace = true

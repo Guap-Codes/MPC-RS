@@ -1,0 +1,89 @@
+// crates/mpc-api/proto/coordinator.proto
+// ============================================================================
+// MPC Coordinator gRPC API Contract
+// ============================================================================
+// This file defines the communication protocol between the `mpc-api` Gateway 
+// (the client) and the `mpc-coordinator` (the server).
+//
+// The protocol is designed around an asynchronous, polling-based model because 
+// Multi-Party Computation (MPC) signing is a multi-round, distributed process 
+// that takes time and cannot be completed in a single synchronous RPC call.
+
+syntax = "proto3";
+
+package coordinator;
+
+// ----------------------------------------------------------------------------
+// Messages
+// ----------------------------------------------------------------------------
+
+/// Request to initiate a new MPC threshold signing session.
+message SigningRequest {
+  // A unique UUIDv4 identifying this specific signing session.
+  string session_id = 1;
+  
+  // The 32-byte cryptographic digest (sighash) that the MPC nodes must sign.
+  bytes message_hash = 2;
+  
+  // The elliptic curve to use for the signing operation (e.g., "secp256k1").
+  string curve = 3;
+  
+  // The list of node indices requested to participate in the signing quorum.
+  // The Coordinator's Policy Engine will use this to route the session to 
+  // the appropriate healthy nodes.
+  repeated uint32 signer_indices = 4;
+  
+  // The BIP32 derivation path of the master key share to be used for signing.
+  // An empty string indicates signing with the raw Master Key (Vault per DKG).
+  string derivation_path = 5;
+}
+
+/// Response acknowledging that the Coordinator has accepted the signing request 
+/// and has begun orchestrating the MPC nodes.
+message SigningResponse {
+  // True if the session was successfully initiated; false otherwise.
+  bool accepted = 1;
+}
+
+/// (Internal) Used by MPC nodes to report their partial signature shares 
+/// back to the Coordinator once their local computation is complete.
+message SignatureReport {
+  string session_id = 1;
+  bytes signature = 2;
+  uint32 party_id = 3;
+}
+
+/// Request to poll the Coordinator for the final, aggregated threshold signature.
+message GetResultRequest {
+  // The UUIDv4 of the signing session to check.
+  string session_id = 1;
+}
+
+/// Response containing the final, fully assembled threshold signature.
+message SignatureResult {
+  // The raw signature bytes (e.g., 64 or 65 bytes for ECDSA, 64 bytes for EdDSA).
+  bytes signature = 1;
+}
+
+/// Acknowledgment message sent by the Coordinator to MPC nodes after 
+/// successfully receiving and aggregating their signature reports.
+message ReportAck {}
+
+// ----------------------------------------------------------------------------
+// Service Definition
+// ----------------------------------------------------------------------------
+
+/// The core service orchestrating distributed MPC signing ceremonies.
+service Coordinator {
+  /// Initiates a new signing session. The API Gateway calls this to hand off 
+  /// the sighash and session metadata to the Coordinator.
+  rpc StartSigning(SigningRequest) returns (SigningResponse);
+  
+  /// Polls for the final signature. The API Gateway calls this repeatedly 
+  /// (with a backoff interval) until the Coordinator returns the assembled 
+  /// signature or a timeout is reached.
+  /// 
+  /// Note: If the signature is not yet ready, the Coordinator should return 
+  /// a gRPC `NotFound` error, which the API Gateway interprets as "keep polling".
+  rpc GetResult(GetResultRequest) returns (SignatureResult);
+}

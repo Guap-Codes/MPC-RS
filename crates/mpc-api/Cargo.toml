@@ -1,0 +1,63 @@
+[package]
+name = "mpc-api"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "mpc-api"
+path = "src/main.rs"
+
+[dependencies]
+alloy-primitives.workspace = true
+axum.workspace = true
+axum-extra.workspace = true
+bitcoin.workspace = true
+base64.workspace = true
+tower.workspace = true
+tower-http.workspace = true 
+tokio.workspace = true
+tonic-prost.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+solana-sdk.workspace = true
+hex.workspace = true
+bs58.workspace = true
+sqlx.workspace = true
+sha2.workspace = true
+sha3.workspace = true
+ripemd.workspace = true
+uuid.workspace = true
+tracing.workspace = true
+jsonwebtoken.workspace = true
+tracing-subscriber.workspace = true
+tonic.workspace = true
+prost.workspace = true
+prost-types.workspace = true
+rustls.workspace = true
+rustls-pemfile.workspace = true
+tokio-rustls.workspace = true
+chrono.workspace = true
+thiserror.workspace = true
+async-trait.workspace = true
+dotenvy.workspace = true
+reqwest.workspace = true
+
+auth.workspace = true
+mpc-common.workspace = true
+mpc-protocol.workspace = true
+
+# Blockchain adapters (only the core trait for now)
+adapter-core = { path = "../blockchain-adapters/adapter-core" }
+bitcoin-adapter = { path = "../blockchain-adapters/bitcoin" }
+ethereum-adapter = { path = "../blockchain-adapters/ethereum" }
+solana-adapter = { path = "../blockchain-adapters/solana" }
+tron-adapter = { path = "../blockchain-adapters/tron"}
+xrp-adapter = { path = "../blockchain-adapters/xrp"}
+
+[build-dependencies]
+tonic-prost-build.workspace = true
+
+[lints]
+workspace = true

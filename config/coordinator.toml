@@ -1,0 +1,11 @@
+[coordinator]
+listen_addr = "0.0.0.0:50052"
+
+[transport.tls]
+ca_cert = "config/ca-cert.pem"
+server_cert = "config/coordinator-cert.pem"
+server_key = "config/coordinator-key.pem"
+
+[session_store]
+type = "sqlite"
+url = "sqlite://coordinator_sessions.db"

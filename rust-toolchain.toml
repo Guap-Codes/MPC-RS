@@ -1,0 +1,15 @@
+# rust-toolchain.toml
+[toolchain]
+# IMPORTANT: This date MUST match the specific nightly toolchain that your 
+# installed version of Kani (0.68.0) expects. You can find this by running 
+# `cargo kani --version` or checking the Kani release notes.
+channel = "nightly-2026-08-21" 
+
+# Components required for Kani's MIR-level analysis and general Rust development
+components = [
+    "rustc-dev",       # Required by Kani to access compiler internals
+    "llvm-tools-preview", # Required by Kani/CBMC
+    "rust-src",        # Required for Kani's standard library modeling
+    "rustfmt",         # Code formatting
+    "clippy"           # Linting
+]

@@ -1,0 +1,46 @@
+[package]
+name = "mpc-node"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "mpc-node"
+path = "src/main.rs"
+
+[dependencies]
+bincode.workspace = true
+bs58.workspace = true
+cggmp21.workspace = true
+futures.workspace = true
+hex.workspace = true
+hmac.workspace = true
+k256.workspace = true
+rand.workspace = true
+ripemd.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+sha3.workspace = true
+tokio.workspace = true
+toml.workspace = true
+tonic.workspace = true
+uuid.workspace = true
+opentelemetry.workspace = true
+opentelemetry-otlp.workspace = true
+opentelemetry_sdk.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+tracing-opentelemetry.workspace = true
+
+
+hsm-core.workspace = true
+soft-hsm.workspace = true
+mpc-core.workspace = true
+mpc-common.workspace = true
+mpc-protocol.workspace = true
+
+
+[lints]
+workspace = true

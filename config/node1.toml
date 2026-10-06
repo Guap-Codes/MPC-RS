@@ -1,0 +1,41 @@
+party_id = 1
+listen_addr = "0.0.0.0:50001"
+coordinator_addr = "127.0.0.1:50052"
+
+[tls]
+certificate_path = "config/node1-cert.pem"
+private_key_path = "config/node1-key.pem"
+ca_certificate_path = "config/ca-cert.pem"
+
+[hsm]
+provider = "SoftHsm"
+share_label = "master"
+
+# THIS NOW WORKS PERFECTLY:
+[hsm.soft_hsm]
+data_dir = "./data/node1"
+master_key_file = "./data/node1_hsm_master.key"
+
+[session]
+message_timeout_secs = 30
+max_retries = 3
+retry_interval_ms = 1000
+
+[logging]
+level = "info"
+format = "Plain"
+otlp_endpoint = "http://localhost:4317"
+
+[[peers]]
+party_id = 2
+address = "https://127.0.0.1:50002"
+domain = "node2"
+cert_path = "config/node1-cert.pem"
+key_path = "config/node1-key.pem"
+
+[[peers]]
+party_id = 3
+address = "https://127.0.0.1:50003"
+domain = "node3"
+cert_path = "config/node1-cert.pem"
+key_path = "config/node1-key.pem"

@@ -1,0 +1,151 @@
+// crates/mpc-protocol/src/proto/mpc.proto
+// ============================================================================
+// MPC Protocol gRPC Definitions
+// ============================================================================
+// This file defines the communication protocol for peer-to-peer MPC node 
+// interactions and node-to-coordinator communication.
+//
+// Security Note: All network communication is secured via mutual TLS (mTLS).
+// Additionally, individual protocol messages are wrapped in a `SignedEnvelope`
+// to provide cryptographic authenticity and integrity at the application layer.
+
+syntax = "proto3";
+
+package mpc;
+
+// An opaque, cryptographically signed envelope for passing MPC protocol messages.
+// This ensures that even if the transport layer is compromised, messages cannot 
+// be forged or tampered with by unauthorized parties.
+message SignedEnvelope {
+  // Unique session identifier (UUID as string) to route the message to the correct protocol instance.
+  string session_id = 1;
+  
+  // The unique numeric ID of the party that sent this message (e.g., 1, 2, 3).
+  uint32 sender = 2;
+  
+  // The intended recipient's numeric ID. 
+  // A value of 0 indicates a broadcast message to all other participating parties.
+  uint32 receiver = 3;
+  
+  // The serialized, protocol-specific message payload (e.g., DKG round data, signature shares).
+  bytes payload = 4;
+  
+  // Unix timestamp in milliseconds, used for message ordering and replay attack prevention.
+  uint64 timestamp_ms = 5;
+  
+  // Ed25519 signature over the concatenation of (session_id, sender, receiver, payload).
+  // This guarantees the authenticity and integrity of the message.
+  bytes signature = 6;
+}
+
+// --- Coordinator Services ---
+
+// Optional coordinator service interface. Primarily used by the API Gateway 
+// to trigger operations and by nodes to report results.
+service MpcCoordinator {
+  // Request a signing session (typically triggered by the API Gateway).
+  rpc StartSigning(SigningRequest) returns (SignedEnvelope);
+
+  // Endpoint for MPC nodes to report their final aggregated signature shares 
+  // back to the Coordinator for assembly.
+  rpc ReportSignature(SignatureReport) returns (ReportAck);
+}
+
+message SignatureReport {
+  // The unique session identifier for this signing operation.
+  string session_id = 1;
+  // The numeric ID of the party reporting the signature.
+  uint32 party_id = 2;
+  // The raw, aggregated signature bytes produced by this party.
+  bytes signature = 3;
+}
+
+message ReportAck {
+  // True if the Coordinator successfully received and stored the signature share.
+  bool received = 1;
+}
+
+message SigningRequest {
+  // Unique session identifier.
+  string session_id = 1;
+  // The 32-byte message digest (sighash) to be signed.
+  bytes message_hash = 2;
+  // The elliptic curve to use (e.g., "secp256k1", "ed25519").
+  string curve = 3;
+  // Optional JSON context for policy evaluation (e.g., transaction details for approval).
+  bytes policy_context = 4;
+}
+
+// --- Node Services ---
+
+// Request to initiate a specific MPC protocol session on a node.
+message SessionRequest {
+  // Unique session identifier.
+  string session_id = 1;
+  
+  // The type of MPC session to initiate.
+  enum Type {
+    DKG = 0;           // Distributed Key Generation (secp256k1)
+    SIGNING = 1;       // Threshold Signing
+    REFRESH = 2;       // Proactive Secret Sharing (Key Rotation)
+    AUX_GEN = 3;       // One-time heavy Paillier/RSA key generation for CGGMP21
+    FROST_DKG = 4;     // FROST Distributed Key Generation (Ed25519 for Solana)
+  }
+  Type session_type = 2;
+  
+  // For DKG / AuxGen: total number of parties, threshold, and curve.
+  uint32 total_parties = 3;
+  uint32 threshold = 4;
+  string curve = 5;
+  
+  // For signing: the message hash, list of participating party indices, and HD derivation path.
+  bytes message_hash = 6;
+  repeated uint32 signer_indices = 7;
+  string derivation_path = 8;
+}
+
+message SessionResponse {
+  // True if the node successfully accepted and initialized the requested session.
+  bool accepted = 1;
+}
+
+// Request to retrieve the public key (and chain code) for a specific derivation path.
+message GetPublicKeyRequest {
+  // The BIP32 derivation path (e.g., "m/44'/60'/0'/0/0"). Empty for master key.
+  string derivation_path = 1;
+  // The elliptic curve (e.g., "secp256k1").
+  string curve = 2;
+}
+
+message PublicKeyResponse {
+  // The serialized public key (e.g., compressed SEC1 for secp256k1).
+  bytes public_key = 1;
+  // The 32-byte master chain code required for Hierarchical Deterministic (HD) address derivation.
+  bytes chain_code = 2; 
+}
+
+// Request to export an encrypted key share for backup or disaster recovery.
+message ExportShareRequest {
+  // The unique identifier of the key share to export (e.g., "master", "dkg-<uuid>").
+  string key_id = 1;
+}
+
+message ExportShareResponse {
+  // The HSM-encrypted key share payload. This is NOT the raw secret.
+  bytes encrypted_share = 1;
+}
+
+// The primary service exposed by every MPC node for peer-to-peer and coordinator communication.
+service MpcNode {
+  // Bidirectional stream for exchanging signed MPC protocol messages.
+  rpc ExchangeMessages(stream SignedEnvelope) returns (stream SignedEnvelope);
+  
+  // Instructs the node to initialize and run a specific MPC session (DKG, Signing, etc.).
+  rpc StartSession(SessionRequest) returns (SessionResponse);
+  
+  // Retrieves the public key and chain code for a given derivation path.
+  rpc GetPublicKey(GetPublicKeyRequest) returns (PublicKeyResponse);
+  
+  // Exports the encrypted key share for backup purposes.
+  rpc ExportShare(ExportShareRequest) returns (ExportShareResponse);
+}

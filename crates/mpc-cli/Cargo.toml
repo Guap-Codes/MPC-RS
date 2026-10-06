@@ -1,0 +1,23 @@
+[package]
+name = "mpc-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+clap.workspace = true
+tokio.workspace = true
+tonic.workspace = true
+tonic-prost.workspace = true
+prost.workspace = true
+jsonwebtoken.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+serde.workspace = true
+toml.workspace = true
+uuid.workspace = true
+
+[build-dependencies]
+tonic-prost-build.workspace = true

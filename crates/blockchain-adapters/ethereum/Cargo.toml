@@ -1,0 +1,21 @@
+[package]
+name = "ethereum-adapter"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+adapter-core = { path = "../adapter-core" }
+alloy-primitives.workspace = true
+alloy-consensus.workspace = true
+alloy-rlp.workspace = true
+async-trait.workspace = true
+hex.workspace = true
+tracing.workspace = true
+reqwest.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+tokio.workspace = true
+k256.workspace = true
+
+[lints]
+workspace = true

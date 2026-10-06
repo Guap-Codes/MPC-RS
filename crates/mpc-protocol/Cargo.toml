@@ -1,0 +1,41 @@
+[package]
+name = "mpc-protocol"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+tonic.workspace = true
+tonic-prost.workspace = true
+async-stream.workspace = true
+prost.workspace = true
+prost-types.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+tokio-util.workspace = true
+round-based.workspace = true
+bincode.workspace = true
+rustls.workspace = true
+rustls-pemfile.workspace = true
+tokio-rustls.workspace = true
+tower.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+thiserror.workspace = true
+futures = "0.3"
+
+mpc-common.workspace = true
+
+
+[features]
+formal-verify = []
+
+[build-dependencies]
+tonic-prost-build.workspace = true
+
+[lints]
+workspace = true
+

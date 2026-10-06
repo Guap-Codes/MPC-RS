@@ -1,0 +1,193 @@
+[workspace]
+members = [
+  "crates/mpc-common",
+  "crates/mpc-core",
+  "crates/mpc-protocol",
+  "crates/mpc-node",
+  "crates/mpc-coordinator",
+  "crates/mpc-api",
+  "crates/mpc-cli",
+  "crates/mpc-keygen",
+  "crates/auth",
+  "crates/policy-engine",                             
+  "crates/blockchain-adapters/adapter-core",
+  "crates/blockchain-adapters/bitcoin",
+  "crates/blockchain-adapters/ethereum",
+  "crates/blockchain-adapters/solana",
+  "crates/blockchain-adapters/xrp",
+  "crates/blockchain-adapters/tron",
+  "crates/hardware-wallet/hw-common",
+  "crates/hardware-wallet/ledger",
+  "crates/hardware-wallet/trezor",
+  "crates/hsm/hsm-core",
+  "crates/hsm/yubihsm",
+  "crates/hsm/aws-cloudhsm",
+  "crates/hsm/azure-hsm",
+  "crates/hsm/soft-hsm",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/guap-codes/mpc-rs"
+
+[workspace.dependencies]
+# -- Async runtime & networking --
+tokio         = { version = "1.52", features = ["full"] }
+tonic         = { version = "0.14", features = ["_tls-any"] }
+#tonic-build = "0.14"
+tonic-prost = "0.14"
+tonic-prost-build = "0.14"
+prost         = "0.14"
+prost-types   = "0.14"
+reqwest       = { version = "0.13", features = ["json"] }
+tower         = "0.5"
+hyper         = "1.9"
+async-trait   = "0.1"
+async-stream = "0.3"
+axum = "0.8"
+axum-extra = { version = "0.12", features = ["typed-header"] }
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+futures = "0.3"
+
+# -- Serialization --
+serde         = { version = "1", features = ["derive"] }
+serde_json    = "1"
+bincode = "1.3.3"
+serde_with    = "3.20"
+
+# -- Cryptography --
+k256          = { version = "0.13", features = ["arithmetic", "ecdsa", "pkcs8", "precomputed-tables", "serde"] }
+bip32 	      = { version = "0.6", features = ["alloc", "secp256k1"] }
+ed25519-dalek = { version = "2.2", features = ["serde"] }
+curve25519-dalek = {version = "4", features = ["group"] }
+p256          = "0.13"
+rand          = "0.8"
+rand_core     = "0.6"
+zeroize       = { version = "1.8", features = ["derive"] }
+hmac          = "0.12"
+sha2          = "0.10"
+sha3          = "0.10"
+digest        = "0.10"
+subtle        = "2.6"
+aes-gcm       = "0.10"
+
+# -- TLS --
+rustls        = "0.23"
+rustls-pemfile = "2.2"
+tokio-rustls  = "0.26"
+tokio-stream = "0.1"
+tokio-util = "0.7"
+
+group = "0.14"
+round-based = "0.4"
+
+# -- Observability --
+tracing              = "0.1"
+tracing-subscriber   = { version = "0.3", features = ["json", "env-filter"] }
+tracing-opentelemetry = "0.33"
+opentelemetry        = "0.32"
+opentelemetry_sdk    = { version = "0.32", features = ["rt-tokio"] }
+opentelemetry-otlp   = {version = "0.32", features = ["grpc-tonic", "trace"] }
+prometheus           = "0.14"
+
+# -- Bitcoin --
+bitcoin = { version = "0.32", features = ["serde"] }
+bitcoin_hashes = "0.14"
+
+# -- Ethereum / Blockchain (Alloy) --
+alloy-primitives = "1.6"
+alloy-consensus = "2.1"
+alloy-rlp = "0.3"
+
+# -- Solana
+solana-sdk = "4.1"
+solana-system-interface = {version = "3.2", features = ["bincode"] }
+solana-program = "4.1"
+spl-token-interface = "3.0" 
+spl-associated-token-account-interface = "2.0" 
+
+# CLI
+clap = { version = "4.6", features = ["derive"] }
+
+# -- XRP ---
+xrpl-mithril = "0.5"
+bs58 = { version = "0.5", features = ["check", "alloc"] }
+
+# -- Authentication / Auth --
+jsonwebtoken  = { version = "11.0", features = ["rust_crypto"] }
+oauth2        = "5"
+
+# CGGMP21 – current state-of-the-art threshold ECDSA
+cggmp21 = { version = "0.6", default-features = false, features = ["state-machine", "hd-wallet", "hd-slip10", "curve-secp256k1"] }          # Entropy's CGGMP21 library (actively maintained)
+
+gmp-mpfr-sys = { version = "1.7", features = ["use-system-libs"] }
+
+# FROST for Ed25519
+frost-ed25519 = "3.0"
+frost-core = "3.0"    # needed for types
+
+
+# -- Database ---
+sqlx = { version = "0.8", features = ["sqlite", "runtime-tokio", "macros", "migrate"] }
+
+# -- Utilities --
+uuid          = { version = "1.23", features = ["v4", "serde"] }
+chrono        = { version = "0.4", features = ["serde"] }
+thiserror     = "2"
+anyhow 	      = "1"
+ripemd	      = "0.1"
+hex           = "0.4"
+base64        = "0.22"
+toml 	      = "1.1"
+url           = "2.5"
+dotenvy	      = "0.15"
+
+# HSM related
+yubihsm = { version = "0.42", features = ["http", "usb"] }
+cryptoki = "0.12"
+
+# -- Testing only --
+proptest      = "1"
+tokio-test    = "0.4"
+tower-test    = "0.4"
+
+# -- 
+auth = { path = "crates/auth" }
+adapter-core = { path = "crates/blockchain-adapters/adapter-core" }
+# Add your specific adapters here if you initialize them in main.rs:
+bitcoin-adapter = { path = "crates/blockchain-adapters/bitcoin" }
+ethereum-adapter = { path = "crates/blockchain-adapters/ethereum" }
+solana-adapter = { path = "crates/blockchain-adapters/solana" }
+tron-adapter = { path = "crates/blockchain-adapters/tron" }
+xrp-adapter = { path = "crates/blockchain-adapters/xrp" }
+mpc-core = { path = "crates/mpc-core" }
+mpc-protocol = { path = "crates/mpc-protocol" }
+mpc-common = { path = "crates/mpc-common" }
+hsm-core = { path = "crates/hsm/hsm-core" }
+soft-hsm = { path = "crates/hsm/soft-hsm" }
+hw-common = { path = "crates/hardware-wallet/hw-common" }
+
+
+[workspace.lints.clippy]
+pedantic = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -1 }
+# DENY PANICS:
+unwrap_used = "deny"
+expect_used = "deny"
+indexing_slicing = "deny"
+arithmetic_side_effects = "deny"
+unreachable = "deny"
+unimplemented = "deny"
+unchecked_time_subtraction = "deny"
+todo = "deny"
+string_slice = "deny"
+panic_in_result_fn = "deny"
+panic = "deny"
+exit = "deny"
+as_conversions = "deny"
+
+[workspace.lints.rust]
+unused_imports = "allow"
